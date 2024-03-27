@@ -1,0 +1,7 @@
+<div class="mt-4" *ngIf="IsPaciente; else ShowFilter">
+    <app-form-show-exames></app-form-show-exames>
+</div>
+
+<ng-template #ShowFilter>
+    <app-form-show-filter></app-form-show-filter>
+</ng-template>

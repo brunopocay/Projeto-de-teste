@@ -1,0 +1,93 @@
+<div class="container">
+  <div class="col p-4">
+    <h2>Pesquisa Exames</h2>
+    <form (submit)="filterByData()">
+      <div class="row mb-2">
+        <div class="col-md-6 form-group">
+          <label>Data inicial:</label>
+          <input type="date" class="form-control" [(ngModel)]="dataMin" name="dataInicial">
+        </div>
+        <div class="col-md-6 form-group">
+          <label>Data final:</label>
+          <input type="date" class="form-control" [(ngModel)]="dataMax" name="dataFinal">
+        </div>
+      </div>
+    <button class="btn btn-primary btn-block" type="submit">Filtrar</button>
+    </form>
+
+    <div class="mt-4">
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Pesquise por qualquer campo" #input>
+      </mat-form-field>
+    
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" matSort>
+        
+          <ng-container matColumnDef="Data">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+            <td mat-cell *matCellDef="let exame"> {{exame.Data}} </td>
+          </ng-container> 
+        
+          <ng-container matColumnDef="Nr.Exame">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nr.Exame</th>
+            <td mat-cell *matCellDef="let exame"> {{exame.NrExame}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="Nr.Guia">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nr.Guia</th>
+            <td mat-cell *matCellDef="let exame"> {{exame.NrGuia}} </td>
+          </ng-container>
+         
+          <ng-container matColumnDef="Previsão de Resultado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Previsão de Resultado</th>
+            <td mat-cell *matCellDef="let exame"> {{exame.PrevisaoResultado}} </td>
+          </ng-container>
+              
+          <ng-container matColumnDef="Paciente">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Paciente</th>
+            <td mat-cell *matCellDef="let exame"> {{exame.Nome}} </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="Exame">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Exame</th>
+            <td mat-cell *matCellDef="let exame"> {{exame.Exame}} </td>
+          </ng-container>
+    
+          <ng-container matColumnDef="Situação">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Situação</th>
+            <td mat-cell *matCellDef="let exame"> {{exame.Situacao}} </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="Laudo">
+            <th mat-header-cell *matHeaderCellDef>Laudo</th>
+            <td mat-cell *matCellDef="let exame">
+              <button *ngIf="exame.DownloadPronto; else DontShowButton" class="btn btn-info btn-sm" (click)="DownloadPDF($event)" [value]="exame.NrExame">
+                Baixar Laudo
+              </button>
+            </td>
+          </ng-container>
+          
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center" colspan="8">Nenhum resultado encontrado"{{input.value}}"</td>
+          </tr>
+        </table>   
+        <mat-paginator 
+            class="demo-paginator"
+            [length]="100"
+            [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            aria-label="Select page">
+        </mat-paginator>  
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #DontShowButton>
+    <td><span class="badge rounded-pill bg-danger">Não disponivel</span></td>
+</ng-template>
