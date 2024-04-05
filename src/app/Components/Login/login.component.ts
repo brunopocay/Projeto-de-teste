@@ -7,6 +7,8 @@ import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../../Services/auth.service';
 import { ApiResponse } from '../../Models/ApiResponse';
 import { UserResponse } from '../../Models/UserResponse';
+import { MatDialog } from '@angular/material/dialog';
+import { TermosDeUsoComponent } from '../termos-de-uso/termos-de-uso.component';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +22,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private formbuilder: FormBuilder
+    private formbuilder: FormBuilder,
+    private dialog: MatDialog
   ) {}
 
   showSpan = false;
@@ -32,6 +35,19 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.formbuilder.group({
       User: [''],
       Password: [''],
+      checkterms: [false, Validators.requiredTrue]
+    });
+  }
+
+  checkTermsAndConditions(): void {
+    const dialogRef = this.dialog.open(TermosDeUsoComponent);
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loginForm.get('checkterms')!.setValue(true);
+      } else {
+        this.loginForm.get('checkterms')!.setValue(false);
+      }
     });
   }
 
@@ -40,33 +56,35 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    const formData = this.loginForm.value;
-    this.showSpan = true;
-    
-    this.authService.login(formData).pipe(
-      catchError((error: HttpErrorResponse) => {
-        let errorMessage = 'Ocorreu um erro ao processar sua solicitação.';
-        if (error.error) {
-          errorMessage = `${error.error.Error}`;
-        } else if (error.status) {
-          errorMessage = `${error.status}: ${error.error.Error}`;
-        }      
+    if(this.loginForm.valid){
+        const formData = this.loginForm.value;
+        this.showSpan = true;
+        
+        this.authService.login(formData).pipe(
+          catchError((error: HttpErrorResponse) => {
+          let errorMessage = 'Ocorreu um erro ao processar sua solicitação.';
+          if (error.error) {
+            errorMessage = `${error.error.Error}`;
+          } else if (error.status) {
+            errorMessage = `${error.status}: ${error.error.Error}`;
+          }      
+          this.showSpan = false;
+          this.responseError = true;
+          this.responseMessageError = errorMessage;
+          
+          setTimeout(() => {
+            this.responseError = false;
+          }, 3000);
+          
+          return throwError(() => error);
+        })
+      ).subscribe((response: ApiResponse<UserResponse>) => {
         this.showSpan = false;
-        this.responseError = true;
-        this.responseMessageError = errorMessage;
-        
-        setTimeout(() => {
-          this.responseError = false;
-        }, 3000);
-        
-        return throwError(() => error);
-      })
-    ).subscribe((response: ApiResponse<UserResponse>) => {
-      this.showSpan = false;
-      this.responseError = false;
-      this.authService.setAuthSessao(response);
-      this.router.navigate(['/']);
-    });
+        this.responseError = false;
+        this.authService.setAuthSessao(response);
+        this.router.navigate(['/']);
+      });
+    }
   }
   
 }

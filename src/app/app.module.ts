@@ -14,12 +14,11 @@ import { FormShowExamesComponent } from './Components/form-show-exames/form-show
 import { FormShowFilterComponent } from './Components/form-show-filter/form-show-filter.component';
 import { AuthInterceptor } from './Services/auth.interceptor';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -39,10 +38,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     ReactiveFormsModule,
     NgbModule,
     MatPaginatorModule,
-    MatSortModule,
     MatTableModule,
     MatInputModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     {

@@ -21,6 +21,4 @@ export class HomeComponent implements OnInit {
     if(this.LocalStorageItens.tipoUsuario == '1')
       this.IsPaciente = true;
   }
-
-  
 }
